@@ -1,0 +1,44 @@
+{
+    "name": "stock-prediction-algorithm",
+    "version": "1.0.0",
+    "description": "Stock prediction algorithm",
+    "main": "gulpfile.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "build": "gulp build",
+        "start": "node app/dist/server.js"
+    },
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "body-parser": "^1.18.2",
+        "debug": "^3.1.0",
+        "del": "^3.0.0",
+        "express": "^4.16.2",
+        "file-system": "^2.2.2",
+        "morgan": "^1.9.0"
+    },
+    "devDependencies": {
+        "@types/body-parser": "^1.16.6",
+        "@types/debug": "0.0.30",
+        "@types/express": "^4.0.38",
+        "@types/morgan": "^1.7.34",
+        "@types/node": "^8.0.47",
+        "brfs": "^1.4.3",
+        "browserify": "^14.5.0",
+        "chai": "^4.1.2",
+        "chai-http": "^3.0.0",
+        "gulp": "^3.9.1",
+        "gulp-concat": "^2.6.1",
+        "gulp-help": "^1.6.1",
+        "gulp-sass": "^3.1.0",
+        "gulp-sourcemaps": "^2.6.1",
+        "gulp-typescript": "^3.2.3",
+        "mocha": "^4.0.1",
+        "run-sequence": "^2.2.0",
+        "ts-node": "^3.3.0",
+        "tsify": "^3.0.3",
+        "typescript": "^2.5.3",
+        "vinyl-source-stream": "^1.1.0"
+    }
+}
