@@ -4,7 +4,7 @@ import json
 json_filename = 'mock-news-data.json'
 csv_filename = 'mock-news-data.csv'
 columns = ['title', 'content', 'date', 'newscompany']
-includes_header = False
+includes_header = True
 
 with open(json_filename) as file:
     data = json.load(file)
