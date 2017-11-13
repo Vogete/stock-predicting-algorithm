@@ -1,0 +1,16 @@
+{
+    "compilerOptions": {
+        "target": "es5",
+        "module": "commonjs",
+        "noImplicitAny": false,
+        "removeComments": true
+    },
+    "include": [
+        "app/src/server.ts",
+        "app/src/App.ts",
+        "app/src/config/config.ts"
+    ],
+    "exclude": [
+        "node_modules"
+    ]
+}
