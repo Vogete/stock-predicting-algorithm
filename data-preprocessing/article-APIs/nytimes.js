@@ -13,15 +13,10 @@ Date.prototype.yyyymmdd = function () {
 
 
 
-var from = new Date();
-var until = new Date();
-var dayInterval = 1;
-
-
 function getDailyNYTArticles(begin_date, end_date, pageOffset = 0) {
     //Documentation: http://developer.nytimes.com/article_search_v2.json#/Documentation/GET/articlesearch.json
 
-    var dataFile = dateConverter(begin_date) + "-" + dateConverter(end_date)+'_nytimes.json';
+    var dataFile = "./data/"+dateConverter(begin_date) + "-" + dateConverter(end_date)+'_nytimes.json';
 
     // options
     var URL = 'https://api.nytimes.com/svc/search/v2/articlesearch.json';
@@ -60,34 +55,39 @@ function dateConverter(date) {
     return date.yyyymmdd();
 }
 
-
+function subtractDay(date, numberOfDays = 1) {
+    var subtractedDay = new Date(date.getFullYear(), date.getMonth(), date.getDate() - numberOfDays );
+    return subtractedDay;
+}
 
 
 (function main () {
-    until.setDate(until.getDate());
-    from.setFullYear(2017, 10, 1);
+    var from = new Date();
+    var until = new Date();
+    var dayInterval = 1;
 
-    console.log(dateConverter(from) + " - " + dateConverter(until));
+    until.setFullYear(2017, 10, 14);
+    from.setFullYear(2017, 7, 1);
+
+    console.log("Full Interval: " + dateConverter(until) + " - " + dateConverter(from));
     console.log('------------------------');
 
     var currentDay = new Date(until);
 
     var apiCallInterval = setInterval(function () {
         var intervalStartDate = new Date();
-        intervalStartDate.setDate(currentDay.getDate()-dayInterval);
+        intervalStartDate = subtractDay(currentDay, dayInterval);
 
         console.log(dateConverter(currentDay) + "-" + dateConverter(intervalStartDate));
-        getDailyNYTArticles(intervalStartDate, currentDay);
+        // getDailyNYTArticles(intervalStartDate, currentDay);
 
-        currentDay.setDate(currentDay.getDate() - 1 );
+        currentDay = subtractDay(currentDay, dayInterval);
 
         if (currentDay < from) {
-            clearInterval(apiCallInterval)
+            clearInterval(apiCallInterval);
         }
-    }, 1000);
+    }, 1);
 
-    // do {
 
-    // } while (currentDay >= from);
 
 })();
