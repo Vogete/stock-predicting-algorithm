@@ -12,41 +12,82 @@ Date.prototype.yyyymmdd = function () {
 };
 
 
-//Documentation: http://developer.nytimes.com/article_search_v2.json#/Documentation/GET/articlesearch.json
+
+var from = new Date();
+var until = new Date();
+var dayInterval = 1;
 
 
-function getDailyNYTArticles(fromDate, untilDate, pageOffset = 0) {
-    var dataFile = 'data_nytimes.json';
+function getDailyNYTArticles(begin_date, end_date, pageOffset = 0) {
+    //Documentation: http://developer.nytimes.com/article_search_v2.json#/Documentation/GET/articlesearch.json
 
+    var dataFile = dateConverter(begin_date) + "-" + dateConverter(end_date)+'_nytimes.json';
+
+    // options
     var URL = 'https://api.nytimes.com/svc/search/v2/articlesearch.json';
     var API_KEY = '9d8594dce0f14204a8d25d50428b3387';
     var searchTerm = "Apple Inc";
+
 
     request.get({
         url: URL,
         qs: {
             'api-key': API_KEY,
             'q': searchTerm,
-            'end_date': fromDate,
-            'begin_date': untilDate,
+            'begin_date': dateConverter(begin_date),
+            'end_date': dateConverter(end_date),
             'page': pageOffset
 
         },
     }, function (err, response, body) {
-        data = JSON.parse(body);
-        jsonfile.writeFileSync(dataFile, data.response);
+        var data = JSON.parse(body);
+
         console.log(data);
+
+        if (data.response.meta.hits > 10) {
+            console.log("WARNING: " + data.response.meta.hits + " results found!");
+        }
+
+        // NYTimes JSON format: data.response.docs
+        jsonfile.writeFileSync(dataFile, data.response.docs);
+        console.log(data);
+
     });
 
 }
 
+function dateConverter(date) {
+    return date.yyyymmdd();
+}
 
 
-var from = new Date();
-var until = new Date();
-from.setDate(from.getDate() - 0);
-until.setDate(from.getDate() - 1 );
 
 
-console.log(from.yyyymmdd() + " - " + until.yyyymmdd());
-getDailyNYTArticles(from.yyyymmdd(), until.yyyymmdd());
+(function main () {
+    until.setDate(until.getDate());
+    from.setFullYear(2017, 10, 1);
+
+    console.log(dateConverter(from) + " - " + dateConverter(until));
+    console.log('------------------------');
+
+    var currentDay = new Date(until);
+
+    var apiCallInterval = setInterval(function () {
+        var intervalStartDate = new Date();
+        intervalStartDate.setDate(currentDay.getDate()-dayInterval);
+
+        console.log(dateConverter(currentDay) + "-" + dateConverter(intervalStartDate));
+        getDailyNYTArticles(intervalStartDate, currentDay);
+
+        currentDay.setDate(currentDay.getDate() - 1 );
+
+        if (currentDay < from) {
+            clearInterval(apiCallInterval)
+        }
+    }, 1000);
+
+    // do {
+
+    // } while (currentDay >= from);
+
+})();
