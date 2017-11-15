@@ -66,8 +66,8 @@ function subtractDay(date, numberOfDays = 1) {
     var until = new Date();
     var dayInterval = 1;
 
-    until.setFullYear(2017, 10, 14);
-    from.setFullYear(2017, 7, 1);
+    until.setFullYear(2017, 7, 1);
+    from.setFullYear(2017, 0, 1);
 
     console.log("Full Interval: " + dateConverter(until) + " - " + dateConverter(from));
     console.log('------------------------');
@@ -79,14 +79,14 @@ function subtractDay(date, numberOfDays = 1) {
         intervalStartDate = subtractDay(currentDay, dayInterval);
 
         console.log(dateConverter(currentDay) + "-" + dateConverter(intervalStartDate));
-        // getDailyNYTArticles(intervalStartDate, currentDay);
+        getDailyNYTArticles(intervalStartDate, currentDay);
 
         currentDay = subtractDay(currentDay, dayInterval);
 
         if (currentDay < from) {
             clearInterval(apiCallInterval);
         }
-    }, 1);
+    }, 1000); // interval for API Should be at least 1000, otherwise the system will lock it
 
 
 
