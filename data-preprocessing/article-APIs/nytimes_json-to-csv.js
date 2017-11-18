@@ -58,7 +58,7 @@ function convertToCSV(jsonData, hasTitle = false) {
 }
 
 function readFromJsonFile(JSON_Path) {
-    var data = fs.readFileSync(JSON_Path, 'utf8');
+    var data = fs.readFileSync(JSON_Path, 'UTF-8');
     var jsonData = JSON.parse(data);
     return jsonData;
 }
@@ -75,16 +75,20 @@ function writeToCSVFile(CSV_Path, data) {
     var beginDate = new Date();
     var endDate = new Date();
     beginDate.setFullYear(2017, 0, 1);
-    endDate.setFullYear(2017, 10, 12);
+    endDate.setFullYear(2017, 10, 13);
 
     var includeHeader = true;
-    var csvData, jsonData;
+    var csvData = [];
+    var jsonData = [];
     var currentDay = new Date(beginDate);
 
     while (currentDay < endDate) {
         var currentFileName = common.dateConverter(currentDay) + "-" + common.dateConverter(common.addDay(currentDay)) + "_nytimes";
 
-        jsonData += readFromJsonFile("./data/" + currentFileName + ".json");
+        var tempjson = readFromJsonFile("./data/" + currentFileName + ".json");
+        for (let i = 0; i < tempjson.length; i++) {
+            jsonData.push(tempjson[i]);
+        }
 
         currentDay = common.addDay(currentDay);
     }
