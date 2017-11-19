@@ -17,6 +17,12 @@ module.exports.dateConverter = function (date) {
     return date.yyyymmdd();
 };
 
+module.exports.dateToEpoch = function (dateString) {
+    // 2017-01-01T17:39:17+0000
+    var date = Date.parse(dateString);
+    return date;
+};
+
 module.exports.subtractDay = function (date, numberOfDays = 1) {
     var subtractedDay = new Date(date.getFullYear(), date.getMonth(), date.getDate() - numberOfDays );
     return subtractedDay;

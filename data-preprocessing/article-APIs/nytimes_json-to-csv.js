@@ -26,6 +26,10 @@ var common = require('./common.js');
 
         var tempjson = common.readFromJsonFile("../../assets/nytimes/json-articles/" + currentFileName + ".json");
         for (let i = 0; i < tempjson.length; i++) {
+
+            // convert date string to epoch (first column is the date!)
+            tempjson[i][csvOptions.columns[0]] = common.dateToEpoch(tempjson[i][csvOptions.columns[0]]).toString();
+
             jsonData.push(tempjson[i]);
         }
 
