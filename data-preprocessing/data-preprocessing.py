@@ -1,11 +1,14 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 
+
+
 def create_constants():
     print 'Creating constants...'
     constants = {
-        'stock_filename': 'stock-prices/AAPL-day.csv'
-        #'stock_filename': 'stock-prices/AAPL-60min.csv'
+        # 'stock_filename': 'stock-prices/AAPL-day.csv'
+        # 'stock_filename': 'stock-prices/AAPL-60min.csv'
+        'stock_filename': 'stock-prices/AAPL-30min.csv'
     }
 
     return constants
@@ -24,7 +27,8 @@ def create_dataframe(stock_filename, has_time):
         columns = ['date', 'open', 'high', 'low', 'close', 'volume']
         df = pd.read_csv(stock_filename, names=columns)
         df = pd.DataFrame({
-            'close': df['close']
+            'close': df['close'],
+            'date': df['date']
         })
 
     return df
@@ -64,6 +68,7 @@ def init():
     df = create_dataframe(constants['stock_filename'], False)
     create_moving_average(df)
     add_change_column(df)
+    print df.head()
     # plot_stock(df)
 
 init()
