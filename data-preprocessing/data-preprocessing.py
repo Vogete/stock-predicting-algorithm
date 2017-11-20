@@ -9,8 +9,8 @@ def create_constants():
     print 'Creating constants...'
     constants = {
         # 'stock_filename': 'stock-prices/AAPL-day.csv'
-        # 'stock_filename': 'stock-prices/AAPL-60min.csv'
-        'stock_filename': 'stock-prices/AAPL-30min.csv'
+        'stock_filename': 'stock-prices/AAPL-60min.csv'
+        # 'stock_filename': 'stock-prices/AAPL-30min.csv'
     }
 
     return constants
@@ -83,13 +83,18 @@ def plot_stock(df):
 
     plt.show()
 
+def save_df_to_csv(filename, df):
+    print 'Saving CSV...'
+    df.to_csv(filename)
+
 def init():
     constants = create_constants()
     df = create_dataframe(constants['stock_filename'], True)
-    # create_moving_average(df)
-    # add_change_column(df)
+    create_moving_average(df)
+    add_change_column(df)
     change_date_to_utc(df)
     print df.head()
+    save_df_to_csv('AAPL-60min.csv', df)
     # plot_stock(df)
 
 init()
