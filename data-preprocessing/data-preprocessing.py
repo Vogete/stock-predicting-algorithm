@@ -70,6 +70,8 @@ def change_date_to_utc(df):
         ny_timezone = timezone('America/New_York')
         eastern = timezone('US/Eastern')
         utc = datetime(year, month, day, hour, minute, 0, 0, tzinfo=pytz.FixedOffset(-300))
+
+        df.loc[i, 'utc'] = str(utc)
         print utc
 
 def plot_stock(df):
