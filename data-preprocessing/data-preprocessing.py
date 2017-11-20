@@ -36,6 +36,11 @@ def create_dataframe(stock_filename, has_time):
 
     return df
 
+def read_csv(path, delimiter):
+    df = pd.read_csv(path, delimiter=delimiter)
+
+    return df
+
 # Creates a moving average of 8 items (hours or half an hours) so the intraday ups and downs are less drastic
 
 def create_moving_average(df):
@@ -88,13 +93,18 @@ def save_df_to_csv(filename, df):
     df.to_csv(filename)
 
 def init():
-    constants = create_constants()
-    df = create_dataframe(constants['stock_filename'], True)
-    create_moving_average(df)
-    add_change_column(df)
-    change_date_to_utc(df)
-    print df.head()
-    save_df_to_csv('AAPL-60min.csv', df)
+    # constants = create_constants()
+    # df = create_dataframe(constants['stock_filename'], True)
+    # create_moving_average(df)
+    # add_change_column(df)
+    # change_date_to_utc(df)
+    # print df.head()
+    # save_df_to_csv('AAPL-60min.csv', df)
     # plot_stock(df)
+
+    df_stock = read_csv('../assets/stock/AAPL/datetime-utc-close-8ma-change/AAPL-60min.csv', ';')
+    df_news = read_csv('../assets/news_articles/nytimes/nytimes-articles.csv', ',')
+
+    print df_news
 
 init()
