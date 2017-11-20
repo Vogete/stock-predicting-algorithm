@@ -2,7 +2,7 @@ var common = require('./common.js');
 
 
 (function main() {
-    var articleDirectory = "../../assets/news_articles/nytimes/json-articles/";
+    var articleDirectory = "../../assets/news_articles/nytimes/";
 
     var beginDate = new Date();
     var endDate = new Date();
@@ -27,7 +27,7 @@ var common = require('./common.js');
     while (currentDay < endDate) {
         var currentFileName = common.dateConverter(currentDay) + "-" + common.dateConverter(common.addDay(currentDay)) + "_nytimes";
 
-        var tempjson = common.readFromJsonFile(articleDirectory + currentFileName + ".json");
+        var tempjson = common.readFromJsonFile(articleDirectory + "json-articles/" + currentFileName + ".json");
         for (let i = 0; i < tempjson.length; i++) {
 
             // convert date string to epoch (second column is the epoch date!)
