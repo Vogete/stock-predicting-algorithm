@@ -1,6 +1,6 @@
 var request = require('request');
 var jsonfile = require('jsonfile');
-var common = require('./common.js');
+var common = require('../common.js');
 
 
 function getDailyNYTArticles(begin_date, end_date, pageOffset = 0) {
