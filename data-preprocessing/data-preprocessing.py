@@ -3,7 +3,7 @@ import pandas as pd
 from datetime import datetime
 import pytz
 from pytz import timezone
-
+import time
 
 def create_constants():
     print 'Creating constants...'
@@ -79,6 +79,12 @@ def change_date_to_utc(df):
         df.loc[i, 'utc'] = str(utc)
         print utc
 
+def add_unix_epoch(df):
+    for i, row in df.iterrows():
+        hello = datetime.strptime(df.loc[i, 'utc'],'%Y-%m-%d %H:%M:%S-05:00')
+        helloka = datetime(hello, tzinfo = 100)
+        #print df.loc[i, 'utc']
+
 def plot_stock(df):
     print 'Creating the plot'
     ax1 = plt.subplot2grid((6,1), (0,0), rowspan=5, colspan=1)
@@ -89,7 +95,7 @@ def plot_stock(df):
     plt.show()
 
 def save_df_to_csv(filename, df):
-    print 'Saving CSV...'
+    print 'Saving to CSV...'
     df.to_csv(filename)
 
 def init():
@@ -103,8 +109,7 @@ def init():
     # plot_stock(df)
 
     df_stock = read_csv('../assets/stock/AAPL/datetime-utc-close-8ma-change/AAPL-60min.csv', ';')
+    add_unix_epoch(df_stock)
     df_news = read_csv('../assets/news_articles/nytimes/nytimes-articles.csv', ',')
-
-    print df_news
 
 init()
