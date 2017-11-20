@@ -2,6 +2,8 @@ var common = require('./common.js');
 
 
 (function main() {
+    var articleDirectory = "../../assets/news_articles/nytimes/json-articles/";
+
     var beginDate = new Date();
     var endDate = new Date();
     var csvData = [];
@@ -14,6 +16,7 @@ var common = require('./common.js');
         includeHeader: true,
         columns: [
             "pub_date",
+            "pub_date_epoch",
             "snippet",
             "headline.main"
         ]
@@ -24,11 +27,12 @@ var common = require('./common.js');
     while (currentDay < endDate) {
         var currentFileName = common.dateConverter(currentDay) + "-" + common.dateConverter(common.addDay(currentDay)) + "_nytimes";
 
-        var tempjson = common.readFromJsonFile("../../assets/nytimes/json-articles/" + currentFileName + ".json");
+        var tempjson = common.readFromJsonFile(articleDirectory + currentFileName + ".json");
         for (let i = 0; i < tempjson.length; i++) {
 
-            // convert date string to epoch (first column is the date!)
-            tempjson[i][csvOptions.columns[0]] = common.dateToEpoch(tempjson[i][csvOptions.columns[0]]).toString();
+            // convert date string to epoch (second column is the epoch date!)
+            tempjson[i][csvOptions.columns[1]] = common.dateToEpoch(tempjson[i][csvOptions.columns[0]]).toString();
+
 
             jsonData.push(tempjson[i]);
         }
@@ -37,7 +41,7 @@ var common = require('./common.js');
     }
 
     csvData = common.convertToCSV(jsonData, csvOptions.columns, csvOptions.includeHeader);
-    common.writeToCSVFile("../../assets/nytimes/nytimes-articles.csv", csvData);
+    common.writeToCSVFile(articleDirectory + "nytimes-articles.csv", csvData);
 
 
 })();
