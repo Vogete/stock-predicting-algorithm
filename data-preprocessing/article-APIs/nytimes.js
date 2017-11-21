@@ -72,5 +72,3 @@ function getDailyNYTArticles(begin_date, end_date, pageOffset = 0) {
 
 
 })();
-
-

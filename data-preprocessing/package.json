@@ -4,6 +4,8 @@
   "description": "",
   "main": "nytimes.js",
   "dependencies": {
+    "csvjson": "^4.3.4",
+    "csvtojson": "^1.1.9",
     "express": "^4.16.2",
     "json2csv": "^3.11.5",
     "jsonfile": "^4.0.0",
