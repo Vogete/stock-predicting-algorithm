@@ -18,7 +18,7 @@ var common = require('../common.js');
             "pub_date",
             "pub_date_epoch",
             "snippet",
-            "headline.main"
+            "headline.main" //TODO: headline_main
         ]
     };
 
