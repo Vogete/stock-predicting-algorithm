@@ -45,14 +45,14 @@ def read_csv(path, delimiter):
 
 def create_moving_average(df):
     print 'Creating moving averages'
-    df['close 8ma'] = df['close'].rolling(window=8, min_periods=0).mean()
+    df['close_8ma'] = df['close'].rolling(window=8, min_periods=0).mean()
 
 def add_change_column(df):
     print 'Adding change column'
     for i, row in df.iterrows():
         if i < (len(df) - 1):
-            close = df.loc[i, 'close 8ma']
-            close_next = df.loc[i + 1, 'close 8ma']
+            close = df.loc[i, 'close_8ma']
+            close_next = df.loc[i + 1, 'close_8ma']
             close_change = (close_next - close)/close*100
             df.loc[i, 'change'] = close_change
             print df.loc[i]
@@ -84,7 +84,7 @@ def plot_stock(df):
     ax1 = plt.subplot2grid((6,1), (0,0), rowspan=5, colspan=1)
 
     ax1.plot(df.index, df['close'])
-    ax1.plot(df.index, df['close 8ma'])
+    ax1.plot(df.index, df['close_8ma'])
 
     plt.show()
 
