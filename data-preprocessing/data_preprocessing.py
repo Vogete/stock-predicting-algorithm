@@ -101,10 +101,8 @@ def init():
     # print df.head()
     # save_df_to_csv('AAPL-60min.csv', df)
     # plot_stock(df)
-
-    df_stock = read_csv('../assets/stock/AAPL/datetime-utc-close-8ma-change/AAPL-60min.csv', ';')
+    #df_stock_news = read_csv('../assets/article_stock/nytimes1.csv', ',')
+    print 'data_preprocessing.py init()'
     #plot_stock(df_stock)
-
-    df_news = read_csv('../assets/news_articles/nytimes/nytimes-articles.csv', ',')
 
 init()
