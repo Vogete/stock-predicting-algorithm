@@ -32,7 +32,7 @@ var common = require('../common.js');
 
             // convert date string to epoch (second column is the epoch date!)
             tempjson[i][csvOptions.columns[1]] = common.dateToEpoch(tempjson[i][csvOptions.columns[0]]).toString();
-
+            // console.log(tempjson[i][csvOptions.columns[1]]);
 
             jsonData.push(tempjson[i]);
         }
