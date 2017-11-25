@@ -10,7 +10,7 @@ var common = require('../common.js');
     var jsonData = [];
 
 
-    beginDate.setFullYear(2017, 0, 1);
+    beginDate.setFullYear(2010, 0, 1);
     endDate.setFullYear(2017, 10, 13);
     var csvOptions = {
         includeHeader: true,
@@ -32,7 +32,7 @@ var common = require('../common.js');
 
             // convert date string to epoch (second column is the epoch date!)
             tempjson[i][csvOptions.columns[1]] = common.dateToEpoch(tempjson[i][csvOptions.columns[0]]).toString();
-
+            // console.log(tempjson[i][csvOptions.columns[1]]);
 
             jsonData.push(tempjson[i]);
         }
