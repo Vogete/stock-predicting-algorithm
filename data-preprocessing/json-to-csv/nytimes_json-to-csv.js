@@ -10,7 +10,7 @@ var common = require('../common.js');
     var jsonData = [];
 
 
-    beginDate.setFullYear(2017, 0, 1);
+    beginDate.setFullYear(2010, 0, 1);
     endDate.setFullYear(2017, 10, 13);
     var csvOptions = {
         includeHeader: true,
