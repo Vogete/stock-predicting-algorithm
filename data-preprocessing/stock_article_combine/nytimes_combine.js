@@ -48,17 +48,17 @@ function searchStockForSingleArticle(stocks, article) {
     var stockMatch;
 
     for (let i = 0; i < stocks.length; i++) {
-        var currStockEpoch = common.dateToEpoch( stocks[i][headers.stock.datetime] );
+        var currStockEpoch = parseInt( common.dateToEpoch( stocks[i][headers.stock.datetime] ) );
         currStockEpoch = parseInt(currStockEpoch);
 
-
         var currDiff = currStockEpoch - currArticleEpoch;
-        // console.log(currDiff);
-
         if (currDiff < diff && currDiff >= 0) {
+
+
             diff = currDiff;
             stockMatch = stocks[i];
-            // console.log("match found");
+
+            console.log("match found " + stockMatch[headers.stock.datetime] + " " + article[headers.article.datetime]);
 
         }
 
@@ -73,6 +73,7 @@ function combineStocksWithArticles(stocks, articles) {
 
     for (let i = 0; i < articles.length; i++) {
         var currentArticle = articles[i];
+
         var matchedStock = searchStockForSingleArticle(stocks, currentArticle);
         var matchedStock_epoch = common.dateToEpoch(matchedStock[headers.stock.datetime]);
 
