@@ -10,8 +10,12 @@ function getDailyNYTArticles(begin_date, end_date, pageOffset = 0) {
 
     // options
     var URL = 'https://api.nytimes.com/svc/search/v2/articlesearch.json';
-    var API_KEY = '9d8594dce0f14204a8d25d50428b3387';
-    var searchTerm = "Apple Inc";
+    // var API_KEY = '9d8594dce0f14204a8d25d50428b3387'; //original
+    // var API_KEY = '58cdd37324864d8996857fbbe30000ce';
+    // var API_KEY = '7450b068d8754af696609dd65e115aee';
+    var API_KEY = '4cde56a0f68b4e709b563bff50098fd1';
+    var searchTerm = "apple";
+    var fq = '("apple" or "iphone" or "mac") and -"fruit"';
 
 
     request.get({
@@ -19,6 +23,7 @@ function getDailyNYTArticles(begin_date, end_date, pageOffset = 0) {
         qs: {
             'api-key': API_KEY,
             'q': searchTerm,
+            'fq': fq,
             'begin_date': common.dateConverter(begin_date),
             'end_date': common.dateConverter(end_date),
             'page': pageOffset
@@ -47,8 +52,8 @@ function getDailyNYTArticles(begin_date, end_date, pageOffset = 0) {
     var until = new Date();
     var dayInterval = 1;
 
-    until.setFullYear(2017, 7, 1);
-    from.setFullYear(2017, 0, 1);
+    from.setFullYear(2016, 6-1, 6);
+    until.setFullYear(2016, 6-1, 9);
 
     console.log("Full Interval: " + common.dateConverter(until) + " - " + common.dateConverter(from));
     console.log('------------------------');
