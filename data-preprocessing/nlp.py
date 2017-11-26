@@ -16,52 +16,58 @@ sys.setdefaultencoding('utf8')
 # nltk.download()
 
 df_stock_news = read_csv('../assets/article_stock/nytimes1.csv', ',')
-news_titles = df_stock_news['title']
-news_description = df_stock_news['description']
 
-corpus = []
+def create_corpus(df):
+    corpus = []
 
-for i, title in news_titles.iteritems():
-    words = word_tokenize(title)
-    filtered_title = []
+    news_titles = df['title']
+    news_description = df['description']
 
-    for word in words:
-        if word not in stop_words:
-            filtered_title.append(word.decode('utf-8').replace(u"\u2018", "").replace(u"\u2019", "").replace(u"\u201d", "").lower())
-            print word
+    for i, title in news_titles.iteritems():
+        words = word_tokenize(title)
+        filtered_title = []
 
-    print filtered_title
-    stemmed_title = []
-    for word in filtered_title:
-        if word not in corpus:
-            corpus.append(word)
-        stemmed_title.append(ps.stem(word))
+        for word in words:
+            if word not in stop_words:
+                filtered_title.append(word.decode('utf-8').replace(u"\u2018", "").replace(u"\u2019", "").replace(u"\u201d", "").lower())
+                print word
 
-    print stemmed_title
+        print filtered_title
+        stemmed_title = []
+        for word in filtered_title:
+            if word not in corpus:
+                corpus.append(word)
+            stemmed_title.append(ps.stem(word))
 
-    df_stock_news.set_value(i, 'title', stemmed_title)
+        print stemmed_title
 
-for i, title in news_description.iteritems():
-    words = word_tokenize(title)
-    filtered_description = []
+        df.set_value(i, 'title', stemmed_title)
 
-    for word in words:
-        if word not in stop_words:
-            filtered_description.append(word.decode('utf-8').replace(u"\u2018", "").replace(u"\u2019", "").replace(u"\u201d", "").lower())
-            print word
+    for i, title in news_description.iteritems():
+        words = word_tokenize(title)
+        filtered_description = []
 
-    print filtered_description
-    stemmed_description = []
-    for word in filtered_description:
-        if word not in corpus:
-            corpus.append(word)
-        stemmed_description.append(ps.stem(word))
+        for word in words:
+            if word not in stop_words:
+                filtered_description.append(word.decode('utf-8').replace(u"\u2018", "").replace(u"\u2019", "").replace(u"\u201d", "").lower())
+                print word
 
-    print stemmed_description
+        print filtered_description
+        stemmed_description = []
+        for word in filtered_description:
+            if word not in corpus:
+                corpus.append(word)
+            stemmed_description.append(ps.stem(word))
 
-    df_stock_news.set_value(i, 'description', stemmed_description)
+        print stemmed_description
 
-print corpus
+        df.set_value(i, 'description', stemmed_description)
+
+    return corpus
+
+
+corpus = create_corpus(df_stock_news)
+
 text_file = open("corpus.txt", "w")
 text_file.write(str(corpus))
 text_file.close()
