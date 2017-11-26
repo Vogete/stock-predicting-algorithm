@@ -4,6 +4,7 @@ from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
 from data_preprocessing import read_csv
 import sys
+from sklearn.preprocessing import LabelEncoder
 
 stop_words = set(stopwords.words("english"))
 print stop_words
@@ -65,11 +66,12 @@ def create_corpus(df):
 
     return corpus
 
+def write_corpus_to_txt(corpus):
+    text_file = open("corpus.txt", "w")
+    text_file.write(str(corpus))
+    text_file.close()
 
 corpus = create_corpus(df_stock_news)
 
-text_file = open("corpus.txt", "w")
-text_file.write(str(corpus))
-text_file.close()
 print len(corpus)
 print df_stock_news.head()
