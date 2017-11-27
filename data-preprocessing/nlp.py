@@ -83,26 +83,6 @@ def format_word(word):
                .lower()
 
 corpus = create_corpus(df_stock_news)
-# print corpus
-# write_corpus_to_txt(corpus)
-
-# corpus = read_corpus_from_txt()
-
-# label_encoder = LabelEncoder()
-
-# encoded_corpus = label_encoder.fit_transform(corpus)
-
-# print "encoded_corpus"
-# print encoded_corpus
-
-# corpus = read_corpus_from_txt()
-
-
-
-# print bag_of_words
-
-# print 'bag_of_words'
-# print bag_of_words
 
 bag_of_words = vectorizer.fit_transform(corpus)
 bag_of_words = bag_of_words.toarray()
@@ -112,7 +92,6 @@ print 'appl', vectorizer.vocabulary_.get("basketbal")
 print "vocab getme apple"
 print vocab[vocab.index("basketbal")]
 
-print df_stock_news.columns[3]
 
 zeros = []
 for w in vocab:
@@ -120,6 +99,8 @@ for w in vocab:
 
 df_training_data = pd.DataFrame(0, index=np.arange(df_stock_news.shape[0]), columns=vocab)
 # df_training_data.to_csv('zeros.csv')
+
+def add_words
 
 for i, row in df_stock_news.iterrows():
     title = df_stock_news.loc[i, 'title']
@@ -136,20 +117,31 @@ for i, row in df_stock_news.iterrows():
     for word in description:
         # print ps.stem(format_word(word))
         if word in vocab:
-            print word
             df_training_data.set_value(i, word, df_training_data.loc[i, word] + 1)
 
-print df_training_data
+# print df_training_data
 
-df_training_data.to_csv('training_data.csv')
+# df_training_data.to_csv('training_data.csv')
 
-# For each, print the vocabulary word and the number of times it
-# appears in the training set
-# for tag, count in zip(vocab, dist):
-#     print count, tag
+def number_of_all_words(df):
+    sum = 0
+
+    for i, row in df.iterrows():
+        one_hot_array = []
+        text = []
+        for column_i, column in df:
+            word_number = df.loc[i, column]
+            if word_number > 0:
+                one_hot_array.append(word_number)
+                word = vocab[column_i]
+                text.append(word)
+
+                sum = sum + word_number
+        print one_hot_array
+        print "SUM: ", sum
+
+# number_of_all_words(df_training_data)
 
 
-# onehotencoder = OneHotEncoder(categorical_features=[0, 1])
-# df_stock_news = onehotencoder.fit_transform(df_stock_news).toarray()
 
 print df_stock_news.head()
