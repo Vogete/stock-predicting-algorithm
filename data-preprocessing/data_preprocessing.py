@@ -4,6 +4,7 @@ from datetime import datetime
 import pytz
 from pytz import timezone
 import time
+import numpy as np
 
 def create_constants():
     print 'Creating constants...'
@@ -102,8 +103,10 @@ def init():
     # save_df_to_csv('AAPL-60min.csv', df)
     # plot_stock(df)
 
-    df_stock_news = read_csv('../assets/article_stock/nytimes1.csv', ',')
-    print df_stock_news
-    #plot_stock(df_stock)
+    # df_stock_news = read_csv('../assets/article_stock/nytimes1.csv', ',')
+    # print df_stock_news
+    # plot_stock(df_stock)
+
+    print "Hello"
 
 init()

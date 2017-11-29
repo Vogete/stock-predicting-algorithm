@@ -7,21 +7,20 @@ from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
 from data_preprocessing import read_csv
 import sys
+
+from sklearn import preprocessing
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder
 from sklearn.feature_extraction.text import CountVectorizer
 
 stop_words = set(stopwords.words("english"))
-print stop_words
-
 ps = PorterStemmer()
 vectorizer = CountVectorizer()
-
 reload(sys)
 sys.setdefaultencoding('utf8')
 
 # nltk.download()
 
-df_stock_news = read_csv('../assets/article_stock/nytimes1.csv', ',')
+df_stock_news = read_csv('../assets/article_stock/nytimes2.csv', ',')
 
 def create_corpus(df):
     corpus = []
@@ -30,12 +29,12 @@ def create_corpus(df):
     news_description = df['description']
 
     for i, title in news_titles.iteritems():
-        words = word_tokenize(title)
+        words = word_tokenize(str(title))
         stemmed_title = []
 
         for word in words:
             if word not in stop_words:
-                formatted_word = word.decode('utf-8').replace(u"\u2018", "").replace(u"\u2019", "").replace(u"\u201d", "").lower()
+                formatted_word = format_word(word)
                 stemmed_word = ps.stem(formatted_word)
 
                 stemmed_title.append(stemmed_word)
@@ -47,7 +46,7 @@ def create_corpus(df):
         df.set_value(i, 'title', stemmed_title)
 
     for i, description in news_description.iteritems():
-        words = word_tokenize(description)
+        words = word_tokenize(str(description))
         stemmed_description = []
 
         for word in words:
@@ -77,51 +76,48 @@ def write_corpus_to_txt(corpus, filename):
         return json.dump(corpus, f)
 
 def format_word(word):
-    return word.decode('utf-8')\
+    return word.decode('utf-8', 'replace')\
                .replace(u"\u2018", "")\
                .replace(u"\u2019", "")\
                .replace(u"\u201c", "")\
                .replace(u"\u201d", "")\
                .lower()
 
-corpus = create_corpus(df_stock_news)
-write_corpus_to_txt(corpus, "corpus.txt")
+# corpus = create_corpus(df_stock_news)
+# write_corpus_to_txt(corpus, "vocab.txt")
 
-bag_of_words = vectorizer.fit_transform(corpus)
-bag_of_words = bag_of_words.toarray()
-vocab = vectorizer.get_feature_names()
+# bag_of_words = vectorizer.fit_transform(corpus)
+# bag_of_words = bag_of_words.toarray()
+# vocab = vectorizer.get_feature_names()
 
 # print 'basketbal', vectorizer.vocabulary_.get("basketbal")
 # print "vocab getme basketbal"
 # print vocab[vocab.index("basketbal")]
 
+# takes df_stock_news as the argument
+def create_one_hot_df(df):
+    df_training_data = pd.DataFrame(0, index=np.arange(df.shape[0]), columns=vocab)
 
-zeros = []
-for w in vocab:
-    zeros.append(0)
+    for i, row in df.iterrows():
+        title = df.loc[i, 'title']
+        for word in title:
+            # print ps.stem(format_word(word))
+            if word in vocab:
+                print word
+                df_training_data.set_value(i, word, df_training_data.loc[i, word] + 1)
+        print title
 
-df_training_data = pd.DataFrame(0, index=np.arange(df_stock_news.shape[0]), columns=vocab)
-
-for i, row in df_stock_news.iterrows():
-    title = df_stock_news.loc[i, 'title']
-    for word in title:
-        # print ps.stem(format_word(word))
-        if word in vocab:
-            print word
-            df_training_data.set_value(i, word, df_training_data.loc[i, word] + 1)
-    print title
-
-for i, row in df_stock_news.iterrows():
-    description = df_stock_news.loc[i, 'description']
-    for word in description:
-        # print ps.stem(format_word(word))
-        if word in vocab:
-            df_training_data.set_value(i, word, df_training_data.loc[i, word] + 1)
-    print description
+    for i, row in df.iterrows():
+        description = df.loc[i, 'description']
+        for word in description:
+            # print ps.stem(format_word(word))
+            if word in vocab:
+                df_training_data.set_value(i, word, df_training_data.loc[i, word] + 1)
+        print description
 
 # print df_training_data
 
-df_training_data.to_csv('training_data.csv')
+# df_training_data.to_csv('training_data.csv')
 
 def number_of_all_words(df):
     sum = 0
@@ -142,6 +138,31 @@ def number_of_all_words(df):
 
 # number_of_all_words(df_training_data)
 
+# print df_stock_news.head()
+
+# df_training_data1 = read_csv('../assets/training_data/training_data-stock_change.csv', ',')
+df_training_data = read_csv('../assets/training_data/training_data.csv', ',')
+
+# print df_training_data1.shape
+print df_training_data.shape
+
+# print df_training_data['stock_price_change']
+
+# for i, change in stock_change.iterrows():
+#     print change
 
 
-print df_stock_news.head()
+# df_training_data['stock_price_change'] = df_stock_news['stock_change']
+
+
+def normalize_dataframe(df):
+    values = df.values #returns a numpy array
+    min_max_scaler = preprocessing.MinMaxScaler()
+    values_scaled = min_max_scaler.fit_transform(values)
+    normalized_df = pd.DataFrame(values_scaled, columns=df_training_data.columns.values)
+
+    return normalized_df
+
+df_training_data = normalize_dataframe(df_training_data)
+
+df_training_data.to_csv('training_data-stock_change-normalized.csv')
