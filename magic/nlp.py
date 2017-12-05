@@ -9,6 +9,7 @@ from nltk.stem import PorterStemmer
 from data_preprocessing import read_csv
 import sys
 from collections import Counter
+import pickle
 
 from sklearn import preprocessing
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder
@@ -22,6 +23,14 @@ reload(sys)
 sys.setdefaultencoding('utf8')
 
 # nltk.download()
+
+def normalize_dataframe(df):
+    values = df.values #returns a numpy array
+    min_max_scaler = preprocessing.MinMaxScaler()
+    values_scaled = min_max_scaler.fit_transform(values)
+    normalized_df = pd.DataFrame(values_scaled, columns=df.columns.values)
+
+    return normalized_df
 
 def create_lexicon(df):
     lexicon = []
@@ -98,7 +107,7 @@ def format_word(word):
 
 df_stock_news = read_csv('../assets/article_stock/nytimes1.csv', ',')
 lexicon = create_lexicon(df_stock_news)
-#lexicon = read_lexicon_from_txt()
+# lexicon = read_lexicon_from_txt()
 print lexicon
 write_lexicon_to_txt(lexicon, "lexicon.txt")
 
@@ -111,7 +120,7 @@ print "vocab getme appl"
 print vocab[vocab.index("appl")]
 
 # takes df_stock_news as the argument
-def create_one_hot_df(df):
+def create_featureset(df, test_size=0.1):
     df_training_data = pd.DataFrame(0, index=np.arange(df.shape[0]), columns=vocab)
 
     for i, row in df.iterrows():
@@ -152,32 +161,55 @@ def create_one_hot_df(df):
         'stock_price_stay': df_training_data['stock_price_stay'],
         'stock_price_down': df_training_data['stock_price_down']
     })
-
-    print "df_stock_changes", df_stock_changes.head()
     df_training_data.drop(['stock_price_up', 'stock_price_stay', 'stock_price_down'], axis=1, inplace=True)
     df_corpus = df_training_data
-
-    print "df_corpus", df_corpus.head()
 
     df_corpus.to_csv('df-corpus.csv')
     df_stock_changes.to_csv('df-stock-changes.csv')
 
-    np_corpus = df_corpus.as_matrix(columns=None)
-    np_stock_change = df_stock_changes.as_matrix(columns=None)
+    df_corpus = normalize_dataframe(df_corpus)
 
-    print np_corpus
-    print np_stock_change
+    features = []
 
-    print len(np_corpus)
-    print len(np_stock_change)
-    np_training_data = np.column_stack((np_corpus, np_stock_change))
-    print np_training_data
-    return np_training_data
+    for i, row in df_corpus.iterrows():
+        row_list = []
+        row_list.append(list(row))
+        row_list.append(list(df_stock_changes.loc[i]))
+
+        features.append(row_list)
+
+    # features.append(np_corpus, np_stock_change)
+
+    testing_size = int(test_size*len(features))
+
+    train_x = np.array(features)[:,0][:-testing_size]
+    train_y = np.array(features)[:,1][:-testing_size]
+
+    test_x = np.array(features)[:,0][-testing_size:]
+    test_y = np.array(features)[:,1][-testing_size:]
+
+    return train_x, train_y, test_x, test_y
+
+train_x, train_y, test_x, test_y = create_featureset(df_stock_news)
+
+print len(train_x)
+print len(train_y)
+
+print len(test_x)
+print len(test_y)
+
+with open('training_data.pickle', 'wb') as f:
+    pickle.dump([train_x, train_y, test_x, test_y], f)
+
+print len(train_x)
+print len(train_y)
+print len(test_x)
+print len(test_y)
 
 
-np_training_data = create_one_hot_df(df_stock_news)
-
-np.save('np_training_data.txt', np_training_data)
+# print "features length", len(features)
+# print "features[0].shape", features[0].shape
+# print "features[1].shape", features[1].shape
 
 
 def number_of_all_words(df):
@@ -201,18 +233,6 @@ def number_of_all_words(df):
 
 # print df_stock_news.head()
 
-def classify_stock_change(df):
-    for i, row in df.iterrows():
-        print df.loc[i, 'stock_price_change']
-        if df.loc[i, 'stock_price_change'] > 0.08:
-            df.set_value(i, 'stock_price_change', [1, 0, 0])
-        if -0.08 <= df.loc[i, 'stock_price_change'] <= 0.08:
-            df.set_value(i, 'stock_price_change', [0, 1, 0])
-        if df.loc[i, 'stock_price_change'] < -0.08:
-            df.set_value(i, 'stock_price_change', [0, 0, 1])
-
-
-
 # print df_training_data['stock_price_change']
 
 # for i, change in stock_change.iterrows():
@@ -220,15 +240,6 @@ def classify_stock_change(df):
 
 
 # df_training_data['stock_price_change'] = df_stock_news['stock_change']
-
-
-def normalize_dataframe(df):
-    values = df.values #returns a numpy array
-    min_max_scaler = preprocessing.MinMaxScaler()
-    values_scaled = min_max_scaler.fit_transform(values)
-    normalized_df = pd.DataFrame(values_scaled, columns=df.columns.values)
-
-    return normalized_df
 
 # df_training_data = normalize_dataframe(df_training_data)
 
