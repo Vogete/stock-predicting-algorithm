@@ -5,7 +5,10 @@ from data_preprocessing import read_csv
 
 from tensorflow.examples.tutorials.mnist import input_data
 
-mnist = input_data.read_data_sets('/tmp/data/', one_hot=True)
+# mnist = input_data.read_data_sets('/tmp/data/', one_hot=True)
+train_x, train_y, test_x, test_y = pickle.load(open("training_data.pickle","rb"))
+
+print train_x[0]
 
 # df_training_data = read_csv('../assets/training_data/training_data-stock_change-normalized.csv', ',')
 
@@ -18,13 +21,13 @@ n_nodes_hl2 = 500
 n_nodes_hl3 = 500
 
 n_classes = 3
-batch_size = 1000
+batch_size = 20
 
-# x = tf.placeholder('float', [None, len(df_training_data.columns)])
+x = tf.placeholder('float', [None, len(train_x[0])])
 y = tf.placeholder('float')
 
 def neural_network_model(data):
-    hidden_layer_1 = {'weights': tf.Variable(tf.random_normal([len(df_training_data.columns), n_nodes_hl1])),
+    hidden_layer_1 = {'weights': tf.Variable(tf.random_normal([len(train_x[0]), n_nodes_hl1])),
                       'biases': tf.Variable(tf.random_normal([n_nodes_hl1]))}
 
     hidden_layer_2 = {'weights': tf.Variable(tf.random_normal([n_nodes_hl1, n_nodes_hl2])),
@@ -72,7 +75,9 @@ def train_neural_network(x):
                 batch_x = np.array(train_x[start:end])
                 batch_y = np.array(train_y[start:end])
 
+
                 _, c = sess.run([optimizer, cost], feed_dict = {x: batch_x, y: batch_y})
+
                 epoch_cost += c
                 i += batch_size
 
@@ -83,4 +88,4 @@ def train_neural_network(x):
 
             print 'accuracy: ', accuracy.eval({x: test_x, y: test_y})
 
-# train_neural_network(x)
+train_neural_network(x)

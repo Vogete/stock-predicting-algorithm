@@ -13,6 +13,7 @@ assets
 *.pyc
 *.txt
 *.csv
+*.npy
 
 # Runtime data
 pids
