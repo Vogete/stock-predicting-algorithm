@@ -105,7 +105,7 @@ def format_word(word):
                .replace(u"\u201d", "")\
                .lower()
 
-df_stock_news = read_csv('../assets/article_stock/nytimes1.csv', ',')
+df_stock_news = read_csv('../assets/article_stock/nytimes2.csv', ',')
 lexicon = create_lexicon(df_stock_news)
 # lexicon = read_lexicon_from_txt()
 print lexicon
@@ -172,39 +172,57 @@ def create_featureset(df, test_size=0.1):
     features = []
 
     for i, row in df_corpus.iterrows():
-        row_list = []
-        row_list.append(list(row))
-        row_list.append(list(df_stock_changes.loc[i]))
+        row_list = [list(df_corpus.loc[i].values), list(df_stock_changes.loc[i].values)]
+        # row_list.append(df_corpus.loc[i].values)
+        # row_list.append(df_stock_changes.loc[i].values)
+
+
+        print '\n\n type(row_list) \n\n', row_list
+
+        # row_list.append(np.asarray(row), dtype=np.float32)
+        # row_list.append(np.asarray(df_stock_changes.loc[i]), dtype=np.float32)
 
         features.append(row_list)
 
-    # features.append(np_corpus, np_stock_change)
 
+    # features.append(np_corpus, np_stock_change)
+    features = np.array(features)
     testing_size = int(test_size*len(features))
 
-    train_x = np.array(features)[:,0][:-testing_size]
-    train_y = np.array(features)[:,1][:-testing_size]
+    print '\n\n type(features) \n\n', type(features)
+    print '\n\n features) \n\n', features
 
-    test_x = np.array(features)[:,0][-testing_size:]
-    test_y = np.array(features)[:,1][-testing_size:]
+    train_x = list(features[:,0][:-testing_size])
+    train_y = list(features[:,1][:-testing_size])
+
+    test_x = list(features[:,0][-testing_size:])
+    test_y = list(features[:,1][-testing_size:])
+
+    print '\n\n test_x \n\n', test_x
+    print '\n\n test_y \n\n', test_y
 
     return train_x, train_y, test_x, test_y
 
 train_x, train_y, test_x, test_y = create_featureset(df_stock_news)
 
-print len(train_x)
-print len(train_y)
+# print len(train_x)
+# print len(train_y)
 
-print len(test_x)
-print len(test_y)
+# print len(train_x[0])
+# print len(train_y[0])
+
+# print len(train_x[1])
+# print len(train_y[1])
+
+# print "train_x[0] \n\n", train_x[0]
+# print "train_x[1] \n\n", train_x[1]
+
+# print "train_y[0] \n\n", train_y[0]
+# print "\n train_y[1] \n\n", train_y[1]
 
 with open('training_data.pickle', 'wb') as f:
-    pickle.dump([train_x, train_y, test_x, test_y], f)
+   pickle.dump([train_x, train_y, test_x, test_y], f)
 
-print len(train_x)
-print len(train_y)
-print len(test_x)
-print len(test_y)
 
 
 # print "features length", len(features)
