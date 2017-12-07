@@ -8,7 +8,15 @@ from tensorflow.examples.tutorials.mnist import input_data
 # mnist = input_data.read_data_sets('/tmp/data/', one_hot=True)
 train_x, train_y, test_x, test_y = pickle.load(open("training_data.pickle","rb"))
 
-print train_x[0]
+print '\n\n type(train_x) \n\n', type(train_x)
+print '\n\n type(train_x[0]) \n\n', type(train_x[0])
+print '\n\n train_x \n\n', train_x
+print '\n\n train_x[0] \n\n', train_x[0]
+
+print '\n\n type(train_y) \n\n', type(train_y)
+print '\n\n type(train_y[0]) \n\n', type(train_y[0])
+print '\n\n train_y \n\n', train_y
+print '\n\n train_y[0] \n\n', train_y[0]
 
 # df_training_data = read_csv('../assets/training_data/training_data-stock_change-normalized.csv', ',')
 
@@ -16,12 +24,12 @@ print train_x[0]
 
 # Number of Nodes in Hidden Layer
 
-n_nodes_hl1 = 500
-n_nodes_hl2 = 500
-n_nodes_hl3 = 500
+n_nodes_hl1 = 1500
+n_nodes_hl2 = 1500
+n_nodes_hl3 = 1500
 
 n_classes = 3
-batch_size = 20
+batch_size = 50
 
 x = tf.placeholder('float', [None, len(train_x[0])])
 y = tf.placeholder('float')
@@ -75,6 +83,24 @@ def train_neural_network(x):
                 batch_x = np.array(train_x[start:end])
                 batch_y = np.array(train_y[start:end])
 
+
+                # print len(batch_x)
+                # print len(batch_y)
+
+                # print len(batch_x[0])
+                # print len(batch_y[0])
+
+                # print len(batch_x[1])
+                # print len(batch_y[1])
+
+                # print "TYPE batch_x[0] \n\n", type(batch_x)
+                # print "\n batch_x[1] \n\n", batch_x[1]
+
+                # print "batch_x[0] \n\n", batch_x[0]
+                # print "\n batch_x[1] \n\n", batch_x[1]
+
+                # print "batch_y[0] \n\n", type(batch_y[0])
+                # print "\n batch_y[1] \n\n", batch_y[1]
 
                 _, c = sess.run([optimizer, cost], feed_dict = {x: batch_x, y: batch_y})
 
