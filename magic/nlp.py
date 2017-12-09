@@ -2,6 +2,7 @@
 import json
 import numpy as np
 import pandas as pd
+import nltk
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
@@ -11,9 +12,10 @@ import sys
 from collections import Counter
 import pickle
 
-from sklearn import preprocessing
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder
 from sklearn.feature_extraction.text import CountVectorizer
+
+# nltk.download()
 
 stop_words = set(stopwords.words("english"))
 lemmatizer = WordNetLemmatizer()
@@ -22,7 +24,7 @@ vectorizer = CountVectorizer()
 reload(sys)
 sys.setdefaultencoding('utf8')
 
-# nltk.download()
+
 
 def normalize_dataframe(df):
     values = df.values #returns a numpy array
@@ -48,6 +50,7 @@ def create_lexicon(df):
                 print 'formatted word: ', formatted_word
                 lemmatized_word = ps.stem(formatted_word)
                 print 'lemmatized_word: ', lemmatized_word
+                print 'titles: ', i, '/', len(news_titles)
 
                 lemmatized_title.append(lemmatized_word)
                 lexicon.append(lemmatized_word)
@@ -65,6 +68,7 @@ def create_lexicon(df):
                 lemmatized_word = ps.stem(formatted_word)
                 print 'formatted word: ', formatted_word
                 print 'lemmatized_word: ', lemmatized_word
+                print 'description: ', i, '/', len(news_description)
 
                 lemmatized_description.append(lemmatized_word)
 
@@ -99,6 +103,15 @@ def write_lexicon_to_txt(corpus, filename):
 
 def format_word(word):
     return word.decode('utf-8', 'replace')\
+               .replace(u"\u2122", "TM")\
+               .replace(u"\u200b", " ")\
+               .replace(u"\u2026", "...")\
+               .replace(u"\u2033", "\"")\
+               .replace(u"\ufffd", "")\
+               .replace(u"\xe3", "")\
+               .replace(u"\u2013", "-")\
+               .replace(u"\u2014", "-")\
+               .replace(u"\u2605", "")\
                .replace(u"\u2018", "")\
                .replace(u"\u2019", "")\
                .replace(u"\u201c", "")\
@@ -155,6 +168,8 @@ def create_featureset(df, test_size=0.1):
             df_training_data.set_value(i, 'stock_price_up', 0)
             df_training_data.set_value(i, 'stock_price_stay', 0)
             df_training_data.set_value(i, 'stock_price_down', 1)
+
+    df_training_data.to_csv('training_data.csv')
 
     df_stock_changes = pd.DataFrame({
         'stock_price_up': df_training_data['stock_price_up'],
