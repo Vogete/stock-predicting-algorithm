@@ -12,7 +12,7 @@ import sys
 from collections import Counter
 import pickle
 
-from sklearn.preprocessing import LabelEncoder, OneHotEncoder
+from sklearn.preprocessing import LabelEncoder, OneHotEncoder, MinMaxScaler
 from sklearn.feature_extraction.text import CountVectorizer
 
 # nltk.download()
@@ -24,11 +24,9 @@ vectorizer = CountVectorizer()
 reload(sys)
 sys.setdefaultencoding('utf8')
 
-
-
 def normalize_dataframe(df):
     values = df.values #returns a numpy array
-    min_max_scaler = preprocessing.MinMaxScaler()
+    min_max_scaler = MinMaxScaler()
     values_scaled = min_max_scaler.fit_transform(values)
     normalized_df = pd.DataFrame(values_scaled, columns=df.columns.values)
 
@@ -119,21 +117,18 @@ def format_word(word):
                .lower()
 
 df_stock_news = read_csv('../assets/article_stock/nytimes2.csv', ',')
-lexicon = create_lexicon(df_stock_news)
-# lexicon = read_lexicon_from_txt()
+# lexicon = create_lexicon(df_stock_news)
+# write_lexicon_to_txt(lexicon, "lexicon.txt")
+
+lexicon = read_lexicon_from_txt()
 print lexicon
-write_lexicon_to_txt(lexicon, "lexicon.txt")
 
 bag_of_words = vectorizer.fit_transform(lexicon)
 bag_of_words = bag_of_words.toarray()
 vocab = vectorizer.get_feature_names()
 
-print 'apple', vectorizer.vocabulary_.get("appl")
-print "vocab getme appl"
-print vocab[vocab.index("appl")]
-
 # takes df_stock_news as the argument
-def create_featureset(df, test_size=0.1):
+def create_dataframe(df):
     df_training_data = pd.DataFrame(0, index=np.arange(df.shape[0]), columns=vocab)
 
     for i, row in df.iterrows():
@@ -169,7 +164,16 @@ def create_featureset(df, test_size=0.1):
             df_training_data.set_value(i, 'stock_price_stay', 0)
             df_training_data.set_value(i, 'stock_price_down', 1)
 
-    df_training_data.to_csv('training_data.csv')
+    return df_training_data
+
+
+# df_training_data = create_dataframe(df_stock_news)
+# df_training_data.to_csv('training_data.csv')
+df_training_data = pd.read_csv('training_data.csv')
+
+print df_training_data.head()
+
+def create_featureset_from_df(df, test_size=0.1):
 
     df_stock_changes = pd.DataFrame({
         'stock_price_up': df_training_data['stock_price_up'],
@@ -218,27 +222,12 @@ def create_featureset(df, test_size=0.1):
 
     return train_x, train_y, test_x, test_y
 
-train_x, train_y, test_x, test_y = create_featureset(df_stock_news)
+train_x, train_y, test_x, test_y = create_featureset_from_df(df_training_data)
 
-# print len(train_x)
-# print len(train_y)
 
-# print len(train_x[0])
-# print len(train_y[0])
-
-# print len(train_x[1])
-# print len(train_y[1])
-
-# print "train_x[0] \n\n", train_x[0]
-# print "train_x[1] \n\n", train_x[1]
-
-# print "train_y[0] \n\n", train_y[0]
-# print "\n train_y[1] \n\n", train_y[1]
 
 with open('training_data.pickle', 'wb') as f:
    pickle.dump([train_x, train_y, test_x, test_y], f)
-
-
 
 # print "features length", len(features)
 # print "features[0].shape", features[0].shape
