@@ -88,8 +88,8 @@ def create_lexicon(df):
     print "filtered_lexicon length: ", len(filtered_lexicon)
     return filtered_lexicon
 
-def read_lexicon_from_txt():
-    with open("lexicon.txt", "r") as f:
+def read_lexicon_from_txt(filename):
+    with open(filename, "r") as f:
         read_lexicon = json.load(f)
         print "read_lexicon"
         print read_lexicon
@@ -120,7 +120,7 @@ df_stock_news = read_csv('../assets/article_stock/nytimes2.csv', ',')
 # lexicon = create_lexicon(df_stock_news)
 # write_lexicon_to_txt(lexicon, "lexicon.txt")
 
-lexicon = read_lexicon_from_txt()
+lexicon = read_lexicon_from_txt("lexicon.txt")
 print lexicon
 
 bag_of_words = vectorizer.fit_transform(lexicon)
@@ -133,8 +133,12 @@ def create_dataframe(df):
 
     for i, row in df.iterrows():
         title = df.loc[i, 'title']
+        print '\n\n title \n\n', title
+        title = word_tokenize(str(title))
+        print '\n\n title \n\n', title
         for word in title:
             print ps.stem(format_word(word))
+            word = ps.stem(format_word(word))
             if word in vocab:
                 print word
                 df_training_data.set_value(i, word, df_training_data.loc[i, word] + 1)
@@ -142,8 +146,11 @@ def create_dataframe(df):
 
     for i, row in df.iterrows():
         description = df.loc[i, 'description']
+        print '\n\n description \n\n', description
+        description = word_tokenize(str(description))
+        print '\n\n description \n\n', description
         for word in description:
-            print ps.stem(format_word(word))
+            word = ps.stem(format_word(word))
             if word in vocab:
                 df_training_data.set_value(i, word, df_training_data.loc[i, word] + 1)
         print description
@@ -167,9 +174,9 @@ def create_dataframe(df):
     return df_training_data
 
 
-# df_training_data = create_dataframe(df_stock_news)
-# df_training_data.to_csv('training_data.csv')
-df_training_data = pd.read_csv('training_data.csv')
+df_training_data = create_dataframe(df_stock_news)
+df_training_data.to_csv('training_data.csv')
+# df_training_data = pd.read_csv('training_data.csv')
 
 print df_training_data.head()
 
@@ -196,18 +203,22 @@ def create_featureset_from_df(df, test_size=0.1):
         row_list = [list(df_corpus.loc[i].values), list(df_stock_changes.loc[i].values)]
         featureset.append(row_list)
         print i, ' / ', df_corpus.shape[0]
-        
-        if i % n_lines_per_pickle == 0:
+
+        if i % n_lines_per_pickle == 0 and i is not 0:
             print 'Got a 1000, i is: ', i
             featureset = np.array(featureset)
-
             with open('training_data_' + str(i-n_lines_per_pickle) + '-' + str(i) + '.pickle', 'wb') as f:
-                pickle.dump(featureset, f, protocol=pickle.HIGHEST_PROTOCOL)
-            
+               pickle.dump(featureset, f, protocol=pickle.HIGHEST_PROTOCOL)
+
             featureset = []
 
+    featureset = np.array(featureset)
+
+    with open('training_data_22000-22705.pickle', 'wb') as f:
+        pickle.dump(featureset, f, protocol=pickle.HIGHEST_PROTOCOL)
+
     # features.append(np_corpus, np_stock_change)
-    testing_size = int(test_size*len(features))
+    # testing_size = int(test_size*len(features))
 
 
 #    train_x = list(features[:,0][:-testing_size])
