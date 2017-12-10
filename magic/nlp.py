@@ -204,7 +204,7 @@ def create_featureset_from_df(df, test_size=0.1):
         featureset.append(row_list)
         print i, ' / ', df_corpus.shape[0]
 
-        if i % n_lines_per_pickle == 0 and i is not 0:
+        if i % n_lines_per_pickle == 0 and i is not int(0):
             print 'Got a 1000, i is: ', i
             featureset = np.array(featureset)
             with open('training_data_' + str(i-n_lines_per_pickle) + '-' + str(i) + '.pickle', 'wb') as f:
@@ -214,7 +214,7 @@ def create_featureset_from_df(df, test_size=0.1):
 
     featureset = np.array(featureset)
 
-    with open('training_data_22000-22705.pickle', 'wb') as f:
+    with open('training_data_last.pickle', 'wb') as f:
         pickle.dump(featureset, f, protocol=pickle.HIGHEST_PROTOCOL)
 
     # features.append(np_corpus, np_stock_change)
