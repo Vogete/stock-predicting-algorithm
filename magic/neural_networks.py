@@ -5,22 +5,69 @@ from data_preprocessing import read_csv
 
 from tensorflow.examples.tutorials.mnist import input_data
 
-# mnist = input_data.read_data_sets('/tmp/data/', one_hot=True)
-train_x, train_y, test_x, test_y = pickle.load(open("training_data.pickle","rb"))
+pickles_to_load = [
+    'training_data_0.pickle',
+    'training_data_0-1000.pickle',
+    'training_data_1000-2000.pickle',
+    'training_data_2000-3000.pickle',
+    'training_data_3000-4000.pickle',
+    'training_data_4000-5000.pickle',
+    'training_data_5000-6000.pickle',
+    'training_data_6000-7000.pickle',
+    'training_data_7000-8000.pickle',
+    'training_data_8000-9000.pickle',
+    'training_data_9000-10000.pickle',
+    'training_data_10000-11000.pickle',
+    'training_data_11000-12000.pickle',
+    'training_data_12000-13000.pickle',
+    'training_data_13000-14000.pickle',
+    'training_data_14000-15000.pickle',
+    'training_data_15000-16000.pickle',
+    'training_data_16000-17000.pickle',
+    'training_data_17000-18000.pickle',
+    'training_data_18000-19000.pickle',
+    'training_data_19000-20000.pickle',
+    'training_data_20000-21000.pickle',
+    'training_data_21000-22000.pickle',
+    'training_data_last.pickle'
+]
 
-print '\n\n type(train_x) \n\n', type(train_x)
-print '\n\n type(train_x[0]) \n\n', type(train_x[0])
-print '\n\n train_x \n\n', train_x
+featureset = []
+
+for pickle_to_load in pickles_to_load:
+    print 'pickle: ', pickle_to_load
+    loaded_pickle = pickle.load(open(pickle_to_load, "rb"))
+    # print '\n\n loaded_pickle[0] \n\n', loaded_pickle[0]
+    print '\n\n len(loaded_pickle) \n\n', len(loaded_pickle)
+    for feature in loaded_pickle:
+        featureset.append(feature)
+
+    print '\n\n len(featureset) \n\n', len(featureset)
+
+print '\n\n final len(featureset) \n\n', len(featureset)
+
+featureset = np.array(featureset)
+
+test_size = 0.1
+testing_size = int(test_size*len(featureset))
+
+train_x = list(featureset[:,0][:-testing_size])
+train_y = list(featureset[:,1][:-testing_size])
+
+test_x = list(featureset[:,0][-testing_size:])
+test_y = list(featureset[:,1][-testing_size:])
+
+print '\n\n len(train_x) \n\n', len(train_x)
 print '\n\n train_x[0] \n\n', train_x[0]
 
-print '\n\n type(train_y) \n\n', type(train_y)
-print '\n\n type(train_y[0]) \n\n', type(train_y[0])
-print '\n\n train_y \n\n', train_y
+print '\n\n len(train_y) \n\n', len(train_y)
 print '\n\n train_y[0] \n\n', train_y[0]
 
-# df_training_data = read_csv('../assets/training_data/training_data-stock_change-normalized.csv', ',')
+print '\n\n len(test_x) \n\n', len(test_x)
+print '\n\n test_x[0] \n\n', test_x[0]
 
-# print df_training_data['stock_price_change'].head()
+print '\n\n len(test_y) \n\n', len(test_y)
+print '\n\n test[0] \n\n', test_y[0]
 
 # Number of Nodes in Hidden Layer
 
@@ -82,25 +129,6 @@ def train_neural_network(x):
 
                 batch_x = np.array(train_x[start:end])
                 batch_y = np.array(train_y[start:end])
-
-
-                # print len(batch_x)
-                # print len(batch_y)
-
-                # print len(batch_x[0])
-                # print len(batch_y[0])
-
-                # print len(batch_x[1])
-                # print len(batch_y[1])
-
-                # print "TYPE batch_x[0] \n\n", type(batch_x)
-                # print "\n batch_x[1] \n\n", batch_x[1]
-
-                # print "batch_x[0] \n\n", batch_x[0]
-                # print "\n batch_x[1] \n\n", batch_x[1]
-
-                # print "batch_y[0] \n\n", type(batch_y[0])
-                # print "\n batch_y[1] \n\n", batch_y[1]
 
                 _, c = sess.run([optimizer, cost], feed_dict = {x: batch_x, y: batch_y})
 
