@@ -188,46 +188,36 @@ def create_featureset_from_df(df, test_size=0.1):
 
     df_corpus = normalize_dataframe(df_corpus)
 
-    features = []
+    n_lines_per_pickle = 1000
+
+    featureset = []
 
     for i, row in df_corpus.iterrows():
         row_list = [list(df_corpus.loc[i].values), list(df_stock_changes.loc[i].values)]
-        # row_list.append(df_corpus.loc[i].values)
-        # row_list.append(df_stock_changes.loc[i].values)
+        featureset.append(row_list)
+        print i, ' / ', df_corpus.shape[0]
+        
+        if i % n_lines_per_pickle == 0:
+            print 'Got a 1000, i is: ', i
+            featureset = np.array(featureset)
 
-
-        print '\n\n type(row_list) \n\n', row_list
-
-        # row_list.append(np.asarray(row), dtype=np.float32)
-        # row_list.append(np.asarray(df_stock_changes.loc[i]), dtype=np.float32)
-
-        features.append(row_list)
-
+            with open('training_data_' + str(i-n_lines_per_pickle) + '-' + str(i) + '.pickle', 'wb') as f:
+                pickle.dump(featureset, f, protocol=pickle.HIGHEST_PROTOCOL)
+            
+            featureset = []
 
     # features.append(np_corpus, np_stock_change)
-    features = np.array(features)
     testing_size = int(test_size*len(features))
 
-    print '\n\n type(features) \n\n', type(features)
-    print '\n\n features) \n\n', features
 
-    train_x = list(features[:,0][:-testing_size])
-    train_y = list(features[:,1][:-testing_size])
+#    train_x = list(features[:,0][:-testing_size])
+#    train_y = list(features[:,1][:-testing_size])
 
-    test_x = list(features[:,0][-testing_size:])
-    test_y = list(features[:,1][-testing_size:])
+#    test_x = list(features[:,0][-testing_size:])
+#    test_y = list(features[:,1][-testing_size:])
 
-    print '\n\n test_x \n\n', test_x
-    print '\n\n test_y \n\n', test_y
+create_featureset_from_df(df_training_data)
 
-    return train_x, train_y, test_x, test_y
-
-train_x, train_y, test_x, test_y = create_featureset_from_df(df_training_data)
-
-
-
-with open('training_data.pickle', 'wb') as f:
-   pickle.dump([train_x, train_y, test_x, test_y], f)
 
 # print "features length", len(features)
 # print "features[0].shape", features[0].shape
