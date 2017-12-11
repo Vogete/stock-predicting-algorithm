@@ -57,17 +57,6 @@ train_y = list(featureset[:,1][:-testing_size])
 test_x = list(featureset[:,0][-testing_size:])
 test_y = list(featureset[:,1][-testing_size:])
 
-print '\n\n len(train_x) \n\n', len(train_x)
-print '\n\n train_x[0] \n\n', train_x[0]
-
-print '\n\n len(train_y) \n\n', len(train_y)
-print '\n\n train_y[0] \n\n', train_y[0]
-
-print '\n\n len(test_x) \n\n', len(test_x)
-print '\n\n test_x[0] \n\n', test_x[0]
-
-print '\n\n len(test_y) \n\n', len(test_y)
-print '\n\n test[0] \n\n', test_y[0]
 
 # Number of Nodes in Hidden Layer
 
@@ -75,7 +64,7 @@ n_nodes_hl1 = 1500
 n_nodes_hl2 = 1500
 n_nodes_hl3 = 1500
 
-n_classes = 3
+n_classes = 2
 batch_size = 50
 
 x = tf.placeholder('float', [None, len(train_x[0])])
@@ -111,10 +100,9 @@ def neural_network_model(data):
 def train_neural_network(x):
     prediction = neural_network_model(x)
     cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=prediction, labels=y))
-
     optimizer = tf.train.AdamOptimizer().minimize(cost)
 
-    n_epochs = 10
+    n_epochs = 12
 
     with tf.Session() as sess:
         sess.run(tf.global_variables_initializer())
@@ -135,11 +123,11 @@ def train_neural_network(x):
                 epoch_cost += c
                 i += batch_size
 
-            print 'Epoch', epoch, 'completed out of ', n_epochs, 'epoch cost: ', epoch_cost
+            print 'Epoch', epoch + 1, 'completed out of ', n_epochs, 'epoch cost: ', epoch_cost
 
-            correct = tf.equal(tf.argmax(prediction, 1), tf.argmax(y, 1))
-            accuracy = tf.reduce_mean(tf.cast(correct, 'float'))
+        correct = tf.equal(tf.argmax(prediction, 1), tf.argmax(y, 1))
+        accuracy = tf.reduce_mean(tf.cast(correct, 'float'))
 
-            print 'accuracy: ', accuracy.eval({x: test_x, y: test_y})
+        print('Accuracy:',accuracy.eval({x: test_x, y: test_y}))
 
 train_neural_network(x)
