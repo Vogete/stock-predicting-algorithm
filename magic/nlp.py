@@ -117,10 +117,10 @@ def format_word(word):
                .lower()
 
 df_stock_news = read_csv('../assets/article_stock/nytimes2.csv', ',')
-# lexicon = create_lexicon(df_stock_news)
-# write_lexicon_to_txt(lexicon, "lexicon.txt")
+lexicon = create_lexicon(df_stock_news)
+write_lexicon_to_txt(lexicon, "lexicon.txt")
+# lexicon = read_lexicon_from_txt("lexicon.txt")
 
-lexicon = read_lexicon_from_txt("lexicon.txt")
 print lexicon
 
 bag_of_words = vectorizer.fit_transform(lexicon)
@@ -158,17 +158,11 @@ def create_dataframe(df):
     for i, row in df.iterrows():
         stock_change = df.loc[i, 'stock_change']
         print stock_change
-        if stock_change > 0.05:
+        if stock_change >= 0:
             df_training_data.set_value(i, 'stock_price_up', 1)
-            df_training_data.set_value(i, 'stock_price_stay', 0)
             df_training_data.set_value(i, 'stock_price_down', 0)
-        if -0.05 <= stock_change <= 0.05:
+        if stock_change < 0:
             df_training_data.set_value(i, 'stock_price_up', 0)
-            df_training_data.set_value(i, 'stock_price_stay', 1)
-            df_training_data.set_value(i, 'stock_price_down', 0)
-        if stock_change < -0.05:
-            df_training_data.set_value(i, 'stock_price_up', 0)
-            df_training_data.set_value(i, 'stock_price_stay', 0)
             df_training_data.set_value(i, 'stock_price_down', 1)
 
     return df_training_data
@@ -180,14 +174,13 @@ df_training_data.to_csv('training_data.csv')
 
 print df_training_data.head()
 
-def create_featureset_from_df(df, test_size=0.1):
+def create_featureset_from_df(df):
 
     df_stock_changes = pd.DataFrame({
         'stock_price_up': df_training_data['stock_price_up'],
-        'stock_price_stay': df_training_data['stock_price_stay'],
         'stock_price_down': df_training_data['stock_price_down']
     })
-    df_training_data.drop(['stock_price_up', 'stock_price_stay', 'stock_price_down'], axis=1, inplace=True)
+    df_training_data.drop(['stock_price_up', 'stock_price_down'], axis=1, inplace=True)
     df_corpus = df_training_data
 
     df_corpus.to_csv('df-corpus.csv')
