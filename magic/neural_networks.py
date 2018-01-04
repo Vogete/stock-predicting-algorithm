@@ -6,7 +6,7 @@ from data_preprocessing import read_csv
 from tensorflow.examples.tutorials.mnist import input_data
 
 pickles_to_load = [
-    'training_data_0.pickle',
+    'training_data_-1000-0.pickle',
     'training_data_0-1000.pickle',
     'training_data_1000-2000.pickle',
     'training_data_2000-3000.pickle',
@@ -48,6 +48,8 @@ print '\n\n final len(featureset) \n\n', len(featureset)
 
 featureset = np.array(featureset)
 
+print featureset[0]
+
 test_size = 0.1
 testing_size = int(test_size*len(featureset))
 
@@ -65,7 +67,7 @@ n_nodes_hl2 = 1500
 n_nodes_hl3 = 1500
 
 n_classes = 2
-batch_size = 50
+batch_size = 1000
 
 x = tf.placeholder('float', [None, len(train_x[0])])
 y = tf.placeholder('float')
