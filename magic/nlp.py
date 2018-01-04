@@ -15,6 +15,8 @@ import pickle
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder, MinMaxScaler
 from sklearn.feature_extraction.text import CountVectorizer
 
+# if this is your first time running NLTK on your computer you need to
+# uncomment this line below and download all nltk package
 # nltk.download()
 
 stop_words = set(stopwords.words("english"))
@@ -46,7 +48,7 @@ def create_lexicon(df):
             if word not in stop_words:
                 formatted_word = format_word(word)
                 print 'formatted word: ', formatted_word
-                lemmatized_word = ps.stem(formatted_word)
+                lemmatized_word = lemmatizer.lemmatize(formatted_word)
                 print 'lemmatized_word: ', lemmatized_word
                 print 'titles: ', i, '/', len(news_titles)
 
@@ -63,7 +65,7 @@ def create_lexicon(df):
         for word in words:
             if word not in stop_words:
                 formatted_word = format_word(word)
-                lemmatized_word = ps.stem(formatted_word)
+                lemmatized_word = lemmatizer.lemmatize(formatted_word)
                 print 'formatted word: ', formatted_word
                 print 'lemmatized_word: ', lemmatized_word
                 print 'description: ', i, '/', len(news_description)
@@ -81,7 +83,7 @@ def create_lexicon(df):
     filtered_lexicon = []
 
     for w in w_counts:
-        if 10000 > w_counts[w] > 5:
+        if 1000 > w_counts[w] > 15:
             filtered_lexicon.append(w)
 
     print "filtered_lexicon: ", filtered_lexicon
@@ -137,8 +139,8 @@ def create_dataframe(df):
         title = word_tokenize(str(title))
         print '\n\n title \n\n', title
         for word in title:
-            print ps.stem(format_word(word))
-            word = ps.stem(format_word(word))
+            print lemmatizer.lemmatize(format_word(word))
+            word = lemmatizer.lemmatize(format_word(word))
             if word in vocab:
                 print word
                 df_training_data.set_value(i, word, df_training_data.loc[i, word] + 1)
@@ -150,7 +152,7 @@ def create_dataframe(df):
         description = word_tokenize(str(description))
         print '\n\n description \n\n', description
         for word in description:
-            word = ps.stem(format_word(word))
+            word = lemmatizer.lemmatize(format_word(word))
             if word in vocab:
                 df_training_data.set_value(i, word, df_training_data.loc[i, word] + 1)
         print description
@@ -210,23 +212,7 @@ def create_featureset_from_df(df):
     with open('training_data_last.pickle', 'wb') as f:
         pickle.dump(featureset, f, protocol=pickle.HIGHEST_PROTOCOL)
 
-    # features.append(np_corpus, np_stock_change)
-    # testing_size = int(test_size*len(features))
-
-
-#    train_x = list(features[:,0][:-testing_size])
-#    train_y = list(features[:,1][:-testing_size])
-
-#    test_x = list(features[:,0][-testing_size:])
-#    test_y = list(features[:,1][-testing_size:])
-
 create_featureset_from_df(df_training_data)
-
-
-# print "features length", len(features)
-# print "features[0].shape", features[0].shape
-# print "features[1].shape", features[1].shape
-
 
 def number_of_all_words(df):
     sum = 0
