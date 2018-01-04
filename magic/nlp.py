@@ -21,7 +21,6 @@ from sklearn.feature_extraction.text import CountVectorizer
 
 stop_words = set(stopwords.words("english"))
 lemmatizer = WordNetLemmatizer()
-ps = PorterStemmer()
 vectorizer = CountVectorizer()
 reload(sys)
 sys.setdefaultencoding('utf8')
@@ -32,6 +31,7 @@ def normalize_dataframe(df):
     values_scaled = min_max_scaler.fit_transform(values)
     normalized_df = pd.DataFrame(values_scaled, columns=df.columns.values)
 
+    print normalized_df
     return normalized_df
 
 def create_lexicon(df):
@@ -118,19 +118,8 @@ def format_word(word):
                .replace(u"\u201d", "")\
                .lower()
 
-df_stock_news = read_csv('../assets/article_stock/nytimes2.csv', ',')
-lexicon = create_lexicon(df_stock_news)
-write_lexicon_to_txt(lexicon, "lexicon.txt")
-# lexicon = read_lexicon_from_txt("lexicon.txt")
-
-print lexicon
-
-bag_of_words = vectorizer.fit_transform(lexicon)
-bag_of_words = bag_of_words.toarray()
-vocab = vectorizer.get_feature_names()
-
 # takes df_stock_news as the argument
-def create_dataframe(df):
+def create_dataframe(df, vocab):
     df_training_data = pd.DataFrame(0, index=np.arange(df.shape[0]), columns=vocab)
 
     for i, row in df.iterrows():
@@ -169,14 +158,8 @@ def create_dataframe(df):
 
     return df_training_data
 
-
-df_training_data = create_dataframe(df_stock_news)
-df_training_data.to_csv('training_data.csv')
-# df_training_data = pd.read_csv('training_data.csv')
-
-print df_training_data.head()
-
 def create_featureset_from_df(df):
+    df_training_data = df
 
     df_stock_changes = pd.DataFrame({
         'stock_price_up': df_training_data['stock_price_up'],
@@ -212,9 +195,7 @@ def create_featureset_from_df(df):
     with open('training_data_last.pickle', 'wb') as f:
         pickle.dump(featureset, f, protocol=pickle.HIGHEST_PROTOCOL)
 
-create_featureset_from_df(df_training_data)
-
-def number_of_all_words(df):
+def number_of_all_words(df, vocab):
     sum = 0
 
     for i, row in df.iterrows():
@@ -231,26 +212,16 @@ def number_of_all_words(df):
         print one_hot_array
         print "SUM: ", sum
 
-# number_of_all_words(df_training_data)
-
-# print df_stock_news.head()
-
-# print df_training_data['stock_price_change']
-
-# for i, change in stock_change.iterrows():
-#     print change
-
-
-# df_training_data['stock_price_change'] = df_stock_news['stock_change']
-
-# df_training_data = normalize_dataframe(df_training_data)
-
 def init():
-    # df_training_data = read_csv('../assets/training_data/training_data-stock_change.csv', ',')
-    # classify_stock_change(df_training_data)
-    # df_training_data.to_csv('training_data-stock_change-classified-stock-change.csv')
-    # df_training_data = normalize_dataframe(df_training_data)
-    # df_training_data.to_csv('training_data-stock_change-normalized-classified-stock-change.csv')
-    print 'nlp.py is running'
+    df_stock_news = read_csv('../assets/article_stock/nytimes2.csv', ',')
+    lexicon = create_lexicon(df_stock_news)
+
+    bag_of_words = vectorizer.fit_transform(lexicon)
+    vocab = vectorizer.get_feature_names()
+
+    df_training_data = create_dataframe(df_stock_news, vocab)
+    df_training_data = normalize_dataframe(df_training_data)
+
+    create_featureset_from_df(df_training_data)
 
 init()
